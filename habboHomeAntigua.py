@@ -131,7 +131,7 @@ async def _habbo(ctx:SlashContext, habbonombre:str,hotel:str):
             imagen_binary.seek(0)
             
 
-            embed = discord.Embed(title="Habbo Home", description=f"Aquí tienes la Habbo Home de `{habbonombre}` de Habbo {hotel.upper()}")
+            embed = discord.Embed(title="Habbo Home", description=f"Aquí tienes la Habbo Home de `{habbonombre}` de Habbo {hotel.upper()}", color=discord.Colour.random())
             embed.set_image(url=f"attachment://HabboHomeAntigua.png")
             
             embed.set_thumbnail(url="https://images.habbo.com/c_images/album1584/HHOME.png")
