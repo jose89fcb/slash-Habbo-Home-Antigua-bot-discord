@@ -1,4 +1,5 @@
-Todos los HOTELES comprobados:
+Todos los <b>HOTELES</b> comprobados:
+<br>
 habbo.com = Sectional
 <br>
 habbo.it = teschietto96
