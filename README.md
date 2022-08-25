@@ -1,5 +1,7 @@
 Todos los <b>HOTELES</b> comprobados:
 <br>
+Está es la lista para que puedan ver que funciona el bot 👇
+<br>
 habbo.com = Sectional
 <br>
 habbo.it = teschietto96
