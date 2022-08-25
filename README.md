@@ -30,7 +30,7 @@ Resultados:
 
 
 <br>
-/habbo habbonombre:.iroke. hotel:ES
+/habbohome habbonombre:.iroke. hotel:ES
 <br>
 <br>
 <br>
