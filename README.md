@@ -30,7 +30,7 @@ habbo.fi = Kyselija
 <br>
 Resultados:
 <br>
-<img src="https://i.imgur.com/comFcbN.png">
+<img src="https://i.imgur.com/QQNIXrd.png">
 
 
 <br>
