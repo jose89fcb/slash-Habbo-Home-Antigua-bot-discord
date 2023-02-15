@@ -1,5 +1,6 @@
 <br>
 Aquí teneis las imagenes de todas las banderas usadas en el bot por si alguna imagen caduca:
+<br>
 https://github.com/jose89fcb/slash-Habbo-Home-Antigua-bot-discord/tree/main/imagenes_bandera
 <br>
 Todos los <b>HOTELES</b> comprobados:
