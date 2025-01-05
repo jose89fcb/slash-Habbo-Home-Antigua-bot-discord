@@ -21,156 +21,104 @@ slash = SlashCommand(bot, sync_commands=True)
 @slash.slash(
     name="habbohome", description="Escribe tu nombre.",
     options=[
-                create_option(
-                  name="habbonombre",
-                  description="Escribe tu nombre de habbo hotel.",
-                  option_type=3,
-                  required=True
-                ),
-                 create_option(
-                  name="hotel",
-                  description="Elige él hotel",
-                  option_type=3,
-                  required=True,
-                  choices=[
-                      create_choice(
-                          name="ES - Hotel España",
-                          value="es"
-                      ),
-                      create_choice(
-                          name="BR - Hotel Brasil",
-                          value="com.br"
-                      ),
-                      create_choice(
-                          name="COM - Hotel Estados unidos",
-                          value="com"
-                      ),
-                      create_choice(
-                          name="DE - Hotel Aleman",
-                          value="de"
-                      ),
-                      create_choice(
-                          name="FR - Hotel Frances",
-                          value="fr"
-                      ),
-                      create_choice(
-                          name="FI - Hotel Finalandia",
-                          value="fi"
-                      ),
-                      create_choice(
-                          name="IT - Hotel Italiano",
-                          value="it"
-                      ),
-                      create_choice(
-                          name="TR - Hotel Turquia",
-                          value="com.tr"
-                      ),
-                      create_choice(
-                          name="NL - Hotel Holandés",
-                          value="nl"
-                      )
-                  ]
-                
-               
-                  
-                )
-             ])
-             
-            
-             
-
-    
-
-
-async def _habbohome(ctx:SlashContext, habbonombre:str,hotel:str):
+        create_option(
+            name="keko",
+            description="Escribe tu nombre de Habbo Hotel.",
+            option_type=3,
+            required=True
+        ),
+        create_option(
+            name="hotel",
+            description="Elige el hotel",
+            option_type=3,
+            required=True,
+            choices=[
+                create_choice(name="ES - Hotel España", value="es"),
+                create_choice(name="BR - Hotel Brasil", value="com.br"),
+                create_choice(name="COM - Hotel Estados Unidos", value="com"),
+                create_choice(name="DE - Hotel Alemán", value="de"),
+                create_choice(name="FR - Hotel Francés", value="fr"),
+                create_choice(name="FI - Hotel Finlandia", value="fi"),
+                create_choice(name="IT - Hotel Italiano", value="it"),
+                create_choice(name="TR - Hotel Turquía", value="com.tr"),
+                create_choice(name="NL - Hotel Holandés", value="nl")
+            ]
+        )
+    ]
+)
+async def _habbohome(ctx: SlashContext, keko: str, hotel: str):
     await ctx.defer()
- 
 
- 
+    # Realizar la solicitud inicial
+    response = requests.get(f"https://www.habbo.{hotel}/api/public/users?name={keko}")
+    if response.status_code != 200:
+        await ctx.send(f"Error al buscar información de {keko} en el hotel {hotel.upper()}. ❌")
+        return
 
-
-   
-    
-
-    ####
-    response = requests.get(f"https://www.habbo.{hotel}/api/public/users?name={habbonombre}")
+    # Obtener `idhabbo`
     try:
-
-     idhabbo = response.json()['uniqueId']
+        idhabbo = response.json()['uniqueId']
     except KeyError:
-     idhabbo="❌"
+        await ctx.send(f"No se encontró el usuario `{keko}` en Habbo {hotel.upper()}. ❌")
+        return
+
+    # Obtener identificador
     try:
-
-     identificador = response.json()['uniqueId'].split("-")[-2]
-    except KeyError:
-        identificador="❌"
-
-    response = requests.get(f"https://www.habbo.{hotel}/extradata/public/users/{idhabbo}/photos")
-    try:
-
-     idcreador = response.json()[0]['creator_id']
+        identificador = idhabbo.split("-")[-2]
     except IndexError:
-        idcreador="❌"
+        identificador = "❌"
 
+    # Obtener `idcreador`
+    photo_response = requests.get(f"https://www.habbo.{hotel}/extradata/public/users/{idhabbo}/photos")
+    try:
+        idcreador = photo_response.json()[0]['creator_id']
+    except (IndexError, KeyError):
+        idcreador = "❌"
 
-
-
-
-
-    
+    # Diccionario de banderas
     bandera_dict = {
-    "es": "https://i.imgur.com/IplIfNP.png",
-    "com.br":  "https://i.imgur.com/YGQlPor.png",
-    "nl":"https://i.imgur.com/fC8eIvR.png",
-    "de":"https://i.imgur.com/vUgY11U.png",
-    "fr":"https://i.imgur.com/CoLWbjf.png",
-    "it":"https://i.imgur.com/va1X4j6.png",
-    "com":"https://i.imgur.com/D6vwN9n.png",
-    "com.tr":"https://i.imgur.com/wtiow4R.png",
-    "fi":"https://i.imgur.com/BpQCpVi.png"
+        "es": "https://i.imgur.com/IplIfNP.png",
+        "com.br": "https://i.imgur.com/YGQlPor.png",
+        "nl": "https://i.imgur.com/fC8eIvR.png",
+        "de": "https://i.imgur.com/vUgY11U.png",
+        "fr": "https://i.imgur.com/CoLWbjf.png",
+        "it": "https://i.imgur.com/va1X4j6.png",
+        "com": "https://i.imgur.com/D6vwN9n.png",
+        "com.tr": "https://i.imgur.com/wtiow4R.png",
+        "fi": "https://i.imgur.com/BpQCpVi.png"
     }
-    bandera = bandera_dict[str(hotel)]
+    bandera = bandera_dict.get(hotel, "https://i.imgur.com/IplIfNP.png")
 
-   
+    # URL del póster
+    url = f"https://images.habbo.com/web_images/mypages/{identificador}/{idcreador}.png"
 
-   
-    
-
-   
-    
-    url = f"https://images.habbo.com/web_images/mypages/{identificador}/{idcreador}.png" #url
-    
-    
-    
+    # Verificar si la imagen existe
     r = requests.get(url)
-    if  r.status_code ==200:
-        imagen = Image.open(io.BytesIO(requests.get(url).content))
+    if r.status_code == 200:
+        imagen = Image.open(io.BytesIO(r.content))
         with io.BytesIO() as imagen_binary:
             imagen.save(imagen_binary, 'PNG')
             imagen_binary.seek(0)
 
-
-           
-            
-
-            embed = discord.Embed(title=f"{habbonombre}", url=f"https://habbo.{hotel}/home/{habbonombre}", description=f" Aquí tienes la Habbo Home de `{habbonombre}` de Habbo {hotel.upper()}", color=discord.Colour.random())
+            embed = discord.Embed(
+                title=f"{keko}",
+                url=f"https://habbo.{hotel}/home/{keko}",
+                description=f"Aquí tienes la Habbo Home de `{keko}` de Habbo {hotel.upper()}",
+                color=discord.Colour.random()
+            )
             embed.set_image(url=f"attachment://HabboHomeAntigua.png")
-            
             embed.set_thumbnail(url="https://images.habbo.com/c_images/album1584/HHOME.png")
             embed.set_footer(text=f"Habbo.{hotel}", icon_url=f"{bandera}")
-            embed.set_author(name=f"HABBO HOME",  icon_url=f"{bandera}")
-            
-            
-           
+            embed.set_author(name=f"HABBO HOME", icon_url=f"{bandera}")
 
-         
-            
-            await ctx.send(f"Hola, {ctx.author.mention} este es el póster de {habbonombre}",embed=embed,file=discord.File(fp=imagen_binary, filename=f'HabboHomeAntigua.png'))
-           
-            
-
+            await ctx.send(
+                f"Hola, {ctx.author.mention} este es el póster de {keko}",
+                embed=embed,
+                file=discord.File(fp=imagen_binary, filename=f'HabboHomeAntigua.png')
+            )
     else:
-        await ctx.send(f"{habbonombre} no tiene póster ❌")
+        await ctx.send(f"{keko} no tiene póster ❌")
+
         
 
 
